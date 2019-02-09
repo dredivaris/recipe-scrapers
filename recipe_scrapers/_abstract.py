@@ -1,4 +1,5 @@
 import requests
+from lxml import html
 
 from bs4 import BeautifulSoup
 
@@ -18,7 +19,6 @@ COOKIES = {
 
 
 class AbstractScraper():
-
     def __getattribute__(self, name):
         """
         Decorate custom methods to handle exceptions as we want and as we
@@ -102,3 +102,21 @@ class AbstractScraper():
             for link in links_html
             if link['href'] not in invalid_href
         ]
+
+    def can_parse(self):
+        return self.ingredients() and self.instructions()
+
+
+class CocktailScraper(AbstractScraper):
+    def total_time(self):
+        return None
+
+    def garnish(self):
+        return None
+
+    def glass(self):
+        return None
+
+    def strip_links(self, element):
+        pass
+
