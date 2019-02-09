@@ -69,6 +69,9 @@ If you are programmer PRs with fixes are warmly welcomed and acknowledged with a
 - [https://www.tudogostoso.com.br/](https://www.tudogostoso.com.br/)
 - [http://twopeasandtheirpod.com/](http://twopeasandtheirpod.com/)
 - [http://whatsgabycooking.com/](http://whatsgabycooking.com/)
+- [http://imbibemagazine.com/](http://imbibemagazine.com/)
+- [http://www.liquor.com/](http://www.liquor.com/)
+- [http://punchdrink.com.com/](http://punchdrink.com.com/)
 
 
 ### If you want a scraper for a new site added
