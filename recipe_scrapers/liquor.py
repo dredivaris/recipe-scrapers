@@ -1,10 +1,8 @@
 import re
 
-from ._abstract import CocktailScraper
+from ._abstract import CocktailScraper, GARNISH, GLASS
 from ._utils import normalize_string
 
-GARNISH = re.compile('Garnish:.*')
-GLASS = re.compile('Glass:.*')
 
 class Liquor(CocktailScraper):
     @classmethod

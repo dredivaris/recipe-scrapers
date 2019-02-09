@@ -16,7 +16,7 @@ class SeriousEats(CocktailScraper):
 
     def title(self):
         title = self.soup.find('h1', {'class': 'recipe-title'}).get_text()
-        return self.strip(title, 'recipe')
+        return normalize_string(self.strip(title, 'recipe'))
 
     def ingredients(self):
         ingredients = self.soup.find_all('li', {'class': 'ingredient'})
@@ -35,4 +35,4 @@ class SeriousEats(CocktailScraper):
         if not garnish:
             return None
         garnish = self.strip(garnish, 'Garnish:').strip()
-        return garnish
+        return normalize_string(garnish)

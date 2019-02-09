@@ -73,6 +73,7 @@ If you are programmer PRs with fixes are warmly welcomed and acknowledged with a
 - [http://www.liquor.com/](http://www.liquor.com/)
 - [http://punchdrink.com/](http://punchdrink.com/)
 - [http://www.seriouseats.com/](http://www.seriouseats.com/)
+- [http://talesofthecocktail.com/](http://talesofthecocktail.com/)
 
 
 ### If you want a scraper for a new site added

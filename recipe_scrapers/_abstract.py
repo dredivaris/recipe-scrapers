@@ -18,6 +18,9 @@ COOKIES = {
     'euConsentID': 'e48da782-e1d1-0931-8796-d75863cdfa15',
 }
 
+GARNISH = re.compile('Garnish:.*')
+GLASS = re.compile('Glass:.*')
+
 
 class AbstractScraper():
     def __getattribute__(self, name):
@@ -132,4 +135,24 @@ class CocktailScraper(AbstractScraper):
 
     @staticmethod
     def contains(text, contains):
-        return contains.upper() in text.upper()
+        if not isinstance(contains, list):
+            contains = [contains]
+        try:
+            text = text.get_text()
+        except AttributeError:
+            pass
+
+        return any([c.upper() in text.upper() for c in contains])
+
+    @staticmethod
+    def find_with_text(node, text, original=None):
+        found = node.find(text=text)
+        if not found:
+            return None
+
+        if original:
+            found = CocktailScraper.strip(found, original)
+        else:
+            found = CocktailScraper.strip(found, text)
+
+        return found
