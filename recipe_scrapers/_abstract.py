@@ -1,4 +1,5 @@
 import requests
+import re
 from lxml import html
 
 from bs4 import BeautifulSoup
@@ -120,3 +121,15 @@ class CocktailScraper(AbstractScraper):
     def strip_links(self, element):
         pass
 
+    @staticmethod
+    def replace(initial, text, with_text):
+        insensitive = re.compile(re.escape(text), re.IGNORECASE)
+        return insensitive.sub(with_text, initial)
+
+    @staticmethod
+    def strip(initial, of_text):
+        return CocktailScraper.replace(initial, of_text, '')
+
+    @staticmethod
+    def contains(text, contains):
+        return contains.upper() in text.upper()
