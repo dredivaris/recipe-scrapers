@@ -71,7 +71,8 @@ If you are programmer PRs with fixes are warmly welcomed and acknowledged with a
 - [http://whatsgabycooking.com/](http://whatsgabycooking.com/)
 - [http://imbibemagazine.com/](http://imbibemagazine.com/)
 - [http://www.liquor.com/](http://www.liquor.com/)
-- [http://punchdrink.com.com/](http://punchdrink.com.com/)
+- [http://punchdrink.com/](http://punchdrink.com/)
+- [http://www.seriouseats.com/](http://www.seriouseats.com/)
 
 
 ### If you want a scraper for a new site added

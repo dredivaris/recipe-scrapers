@@ -33,6 +33,7 @@ from .whatsgabycooking import WhatsGabyCooking
 from .imbibemagazine import ImbibeMagazine
 from .punchdrink import PunchDrink
 from .liquor import Liquor
+from .seriouseats import SeriousEats
 
 
 # TODO: drinkwire.liquor.com
@@ -74,6 +75,7 @@ SCRAPERS = {
     ImbibeMagazine.host(): ImbibeMagazine,
     PunchDrink.host(): PunchDrink,
     Liquor.host(): Liquor,
+    SeriousEats.host(): SeriousEats,
 }
 
 
