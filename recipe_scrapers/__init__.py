@@ -30,6 +30,12 @@ from .thevintagemixer import TheVintageMixer
 from .tudogostoso import TudoGostoso
 from .twopeasandtheirpod import TwoPeasAndTheirPod
 from .whatsgabycooking import WhatsGabyCooking
+from .imbibemagazine import ImbibeMagazine
+from .punchdrink import PunchDrink
+from .liquor import Liquor
+
+
+# TODO: drinkwire.liquor.com
 
 
 SCRAPERS = {
@@ -65,6 +71,9 @@ SCRAPERS = {
     TudoGostoso.host(): TudoGostoso,
     TwoPeasAndTheirPod.host(): TwoPeasAndTheirPod,
     WhatsGabyCooking.host(): WhatsGabyCooking,
+    ImbibeMagazine.host(): ImbibeMagazine,
+    PunchDrink.host(): PunchDrink,
+    Liquor.host(): Liquor,
 }
 
 
@@ -101,5 +110,13 @@ def scrape_me(url_path):
 
     return scraper(url_path)
 
+
+def scrape_me_show(url_path):
+    scraped = scrape_me(url_path)
+    print(scraped.title(), end='\n')
+    print(scraped.ingredients(), end='\n')
+    print(scraped.instructions(), end='\n')
+    print(scraped.garnish(), end='\n')
+    print(scraped.glass(), end='\n')
 
 __all__ = ['scrape_me']
