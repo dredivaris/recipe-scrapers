@@ -58,9 +58,7 @@ class ImbibeMagazine(CocktailScraper):
                 .findAll('p')[2].get_text()
         except IndexError:
             instructions = self.soup\
-                .findAll('div', {'class': ['preparation__content']})[0]\
-                .findAll('p')[0].text
-
+                .findAll('div', {'class': ['preparation__content']})[0].get_text().strip()
         return instructions
 
     def glass(self):
