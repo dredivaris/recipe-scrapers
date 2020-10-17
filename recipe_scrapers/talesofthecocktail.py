@@ -1,5 +1,7 @@
 import re
 
+from bs4 import BeautifulSoup
+
 from ._abstract import CocktailScraper, GARNISH
 from ._utils import normalize_string
 
@@ -41,3 +43,11 @@ class TalesOfTheCocktail(CocktailScraper):
             ingredients = self.soup.find('li', {'itemprop': 'ingredients'}).parent
             garnish = self.find_with_text(ingredients, GARNISH2, 'for garnish')
         return normalize_string(garnish)
+
+# temp helper
+def get_for_html(html):
+    text = html.get_content()
+    root = BeautifulSoup(text, 'html.parser')
+    all_possible = root.find_all('h3', {'class': 'recipe_subtitle1'})
+    print(len(all_possible))
+    return all_possible

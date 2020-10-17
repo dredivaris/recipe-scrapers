@@ -118,6 +118,9 @@ class CocktailScraper(AbstractScraper):
     def garnish(self):
         return None
 
+    def description(self):
+        return None
+
     def glass(self):
         return None
 
@@ -142,7 +145,7 @@ class CocktailScraper(AbstractScraper):
         except AttributeError:
             pass
 
-        return any([c.upper() in text.upper() for c in contains])
+        return any(c.upper() in text.upper() for c in contains)
 
     @staticmethod
     def find_with_text(node, text, original=None):
