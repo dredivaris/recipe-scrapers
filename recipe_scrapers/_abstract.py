@@ -125,6 +125,8 @@ class CocktailScraper(AbstractScraper):
         return None
 
     def garnish(self):
+        if self._garnish:
+            return self._garnish
         return None
 
     def description(self):
