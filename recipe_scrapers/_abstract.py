@@ -107,8 +107,17 @@ class AbstractScraper():
             if link['href'] not in invalid_href
         ]
 
+    def reference(self):
+        return None
+
+    def rating(self):
+        return None
+
     def can_parse(self):
         return self.ingredients() and self.instructions()
+
+    def directions(self):
+        return self.instructions()
 
 
 class CocktailScraper(AbstractScraper):
