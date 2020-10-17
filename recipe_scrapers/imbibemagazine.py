@@ -25,27 +25,54 @@ class ImbibeMagazine(CocktailScraper):
         return texts
 
     def ingredients(self):
-        ingredients_html = self.soup.findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1].findAll('p')[1]
-        ingredients = []
-        current = ''
-        for step in ingredients_html.contents:
-            if step.name == 'br':
-                if current:
-                    ingredients.append(current.strip())
-                    current = ''
-                continue
-            try:
-                text = step.get_text()
-            except AttributeError:
-                text = str(step)
-            if text:
-                current += text
-        if current:
-            ingredients.append(current.strip())
+        try:
+            ingredients_html = self.soup.findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1].findAll('p')[1]
+        except IndexError:
+            ingredients_html = self.soup.findAll('ul', {'class': ['ingredients__ingredients']})[0]
+            ingredients = [j.text.strip() for j in ingredients_html.findAll('li')]
+            return [normalize_string(ingredient) for ingredient in ingredients]
+        else:
+            ingredients = []
+            current = ''
+            for step in ingredients_html.contents:
+                if step.name == 'br':
+                    if current:
+                        ingredients.append(current.strip())
+                        current = ''
+                    continue
+                try:
+                    text = step.get_text()
+                except AttributeError:
+                    text = str(step)
+                if text:
+                    current += text
+            if current:
+                ingredients.append(current.strip())
 
         return [normalize_string(ingredient) for ingredient in ingredients]
 
     def instructions(self):
-        instructions = self.soup.findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1].findAll('p')[2].get_text()
+        try:
+            instructions = self.soup\
+                .findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1]\
+                .findAll('p')[2].get_text()
+        except IndexError:
+            instructions = self.soup\
+                .findAll('div', {'class': ['preparation__content']})[0]\
+                .findAll('p')[0].text
 
-        return [instructions]
+        return instructions
+
+    def glass(self):
+        tools = self.soup.findAll('ul', {'class': ['ingredients__tools']})[0].findAll('li', {'class': ['ingredients__item']})
+        for tool in tools:
+            if 'glass' in tool.text.strip().lower():
+                return normalize_string(tool.text.split(':')[1])
+        return ''
+
+    def garnish(self):
+        tools = self.soup.findAll('ul', {'class': ['ingredients__tools']})[0].findAll('li', {'class': ['ingredients__item']})
+        for tool in tools:
+            if 'garnish' in tool.text.strip().lower():
+                return normalize_string(tool.text.split(':')[1])
+        return ''
