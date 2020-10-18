@@ -24,11 +24,55 @@ class ImbibeMagazine(CocktailScraper):
                 texts.append(next_str)
         return texts
 
+    def _fallback_ingredients(self):
+        ingredients = []
+        current_ingredient = ''
+        for ingredient in self._get_fallback_content()[1]:
+            if ingredient.name and ingredient.name == 'br':
+                if current_ingredient:
+                    ingredients.append(current_ingredient)
+                    current_ingredient = ''
+            elif ingredient.name and ingredient.name == 'a':
+                current_ingredient += ingredient.get_text()
+            else:
+                l = ingredient.lower()
+                if 'tools:' not in l and 'glass:' not in l and 'garnish:' not in l:
+                    current_ingredient += ingredient.lstrip()
+        return [normalize_string(i) for i in ingredients]
+
+    def _fallback_garnish(self):
+        for ingredient in self._get_fallback_content()[1]:
+            if ingredient.name and ingredient.name == 'br':
+                continue
+            elif ingredient.name and ingredient.name == 'a':
+                continue
+            else:
+                l = ingredient.lower()
+                if 'garnish:' in l:
+                    return normalize_string(l.replace('garnish:', ''.strip()))
+        return ''
+
+    def _fallback_glass(self):
+        for ingredient in self._get_fallback_content()[1]:
+            if ingredient.name and ingredient.name == 'br':
+                continue
+            elif ingredient.name and ingredient.name == 'a':
+                continue
+            else:
+                l = ingredient.lower()
+                if 'glass:' in l:
+                    return normalize_string(l.replace('glass:', ''.strip()))
+        return ''
+
     def ingredients(self):
         try:
             ingredients_html = self.soup.findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1].findAll('p')[1]
         except IndexError:
-            ingredients_html = self.soup.findAll('ul', {'class': ['ingredients__ingredients']})[0]
+            try:
+                ingredients_html = self.soup\
+                    .findAll('ul', {'class': ['ingredients__ingredients']})[0]
+            except IndexError:
+                return self._fallback_ingredients()
             ingredients = [j.text.strip() for j in ingredients_html.findAll('li')]
             return [normalize_string(ingredient) for ingredient in ingredients]
         else:
@@ -49,28 +93,38 @@ class ImbibeMagazine(CocktailScraper):
             if current:
                 ingredients.append(current.strip())
 
+        if not ingredients:
+            return self._fallback_ingredients()
+
         return [normalize_string(ingredient) for ingredient in ingredients]
 
     def instructions(self):
         try:
-            instructions = self.soup\
-                .findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1]\
-                .findAll('p')[2].get_text()
+            instructions = self.soup.findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1].findAll('p')[2].get_text()
         except IndexError:
-            instructions = self.soup\
-                .findAll('div', {'class': ['preparation__content']})[0].get_text().strip()
+            try:
+                instructions = self.soup.findAll('div', {'class': ['preparation__content']})[0].get_text().strip()
+            except IndexError:
+                return self._get_fallback_content()[2].get_text()
         return instructions
 
     def glass(self):
-        tools = self.soup.findAll('ul', {'class': ['ingredients__tools']})[0].findAll('li', {'class': ['ingredients__item']})
-        for tool in tools:
-            if 'glass' in tool.text.strip().lower():
-                return normalize_string(tool.text.split(':')[1])
-        return ''
+        try:
+            tools = self.soup.findAll('ul', {'class': ['ingredients__tools']})[0].findAll('li', {'class': ['ingredients__item']})
+            for tool in tools:
+                if 'glass' in tool.text.strip().lower():
+                    return normalize_string(tool.text.split(':')[1])
+        except IndexError:
+            return self._fallback_glass()
 
     def garnish(self):
-        tools = self.soup.findAll('ul', {'class': ['ingredients__tools']})[0].findAll('li', {'class': ['ingredients__item']})
-        for tool in tools:
-            if 'garnish' in tool.text.strip().lower():
-                return normalize_string(tool.text.split(':')[1])
-        return ''
+        try:
+            tools = self.soup.findAll('ul', {'class': ['ingredients__tools']})[0].findAll('li', {'class': ['ingredients__item']})
+            for tool in tools:
+                if 'garnish' in tool.text.strip().lower():
+                    return normalize_string(tool.text.split(':')[1])
+        except IndexError:
+            return self._fallback_garnish()
+
+    def _get_fallback_content(self):
+        return self.soup.find('div', {'class': ['recipe__main-content']}).findAll('p')
