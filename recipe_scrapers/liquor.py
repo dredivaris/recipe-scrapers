@@ -33,7 +33,9 @@ class Liquor(CocktailScraper):
                 ingredient_list = [normalize_string(i.get_text()) for i in ingredient_list
                                    if self.not_garnish_or_glass(i)]
         except AttributeError:
-            return None
+            ingredient_list = self.soup\
+                .find_all('li', {'class': ['simple-list__item', 'ingredient']})
+            ingredient_list = [i.get_text().strip() for i in ingredient_list]
         return ingredient_list
 
     def instructions(self):
@@ -42,8 +44,13 @@ class Liquor(CocktailScraper):
                     self.soup.find('div', {'class': 'x-recipe-prep'}).find_all('p')
                     if not i.get_text().startswith('*')]
         except AttributeError:
-            instructions = [self.soup.find(text='PREPARATION:').parent.parent.parent
-                                .get_text().split(':')[1].strip()]
+            try:
+                instructions = [self.soup.find(text='PREPARATION:').parent.parent.parent
+                                    .get_text().split(':')[1].strip()]
+            except AttributeError:
+                inst_steps = [i.get_text().strip()
+                              for i in self.soup.findAll('li', {'class':['comp']})]
+                return ' '.join(inst_steps)
 
         return instructions
 
@@ -52,8 +59,8 @@ class Liquor(CocktailScraper):
             return normalize_string(self.soup.find('span', {'class': 'oz-value'}).get_text())
         except AttributeError:
             try:
-                return self.soup.find('li', text=GARNISH)\
-                    .get_text().split(':')[1].strip()
+                garnishes = self.soup.findAll('li', text=GARNISH)
+                return ', '.join(i.get_text().split(':')[1].strip() for i in garnishes)
             except AttributeError:
                 return None
 
