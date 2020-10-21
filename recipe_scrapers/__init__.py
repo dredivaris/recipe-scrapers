@@ -37,6 +37,7 @@ from .seriouseats import SeriousEats
 from .talesofthecocktail import TalesOfTheCocktail
 from .kindredcocktails import KindredCocktails
 from .chowhound import Chowhound
+from .saveur import Saveur
 
 
 # TODO: drinkwire.liquor.com
@@ -82,6 +83,7 @@ SCRAPERS = {
     TalesOfTheCocktail.host(): TalesOfTheCocktail,
     KindredCocktails.host(): KindredCocktails,
     Chowhound.host(): Chowhound,
+    Saveur.host(): Saveur,
 }
 
 
