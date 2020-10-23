@@ -23,7 +23,7 @@ class PunchDrink(CocktailScraper):
                         if possible.find(text='Directions')][0]
         instructions = instructions.nextSibling.nextSibling.find_all('li')
 
-        return [normalize_string(instruction.get_text()) for instruction in instructions]
+        return ' '.join(normalize_string(instruction.get_text()) for instruction in instructions)
 
     def garnish(self):
         garnish = normalize_string(self.soup.find('p', {'class': 'garn-glass'}).get_text())
