@@ -24,6 +24,22 @@ class ImbibeMagazine(CocktailScraper):
                 texts.append(next_str)
         return texts
 
+    def _fallback_ingredients_two(self):
+        ingredients = []
+        current_ingredient = ''
+        for ingredient in self._get_fallback_content()[2]:
+            if ingredient.name and ingredient.name == 'br':
+                if current_ingredient:
+                    ingredients.append(current_ingredient)
+                    current_ingredient = ''
+            elif ingredient.name and ingredient.name == 'a':
+                current_ingredient += ingredient.get_text()
+            else:
+                l = ingredient.lower()
+                if 'tools:' not in l and 'glass:' not in l and 'garnish:' not in l:
+                    current_ingredient += ingredient.lstrip()
+        return ingredients
+
     def _fallback_ingredients(self):
         ingredients = []
         current_ingredient = ''
@@ -40,21 +56,14 @@ class ImbibeMagazine(CocktailScraper):
                     if 'tools:' not in l and 'glass:' not in l and 'garnish:' not in l:
                         current_ingredient += ingredient.lstrip()
         except:
-            ingredients = []
-            current_ingredient = ''
-            for ingredient in self._get_fallback_content()[2]:
-                if ingredient.name and ingredient.name == 'br':
-                    if current_ingredient:
-                        ingredients.append(current_ingredient)
-                        current_ingredient = ''
-                elif ingredient.name and ingredient.name == 'a':
-                    current_ingredient += ingredient.get_text()
-                else:
-                    l = ingredient.lower()
-                    if 'tools:' not in l and 'glass:' not in l and 'garnish:' not in l:
-                        current_ingredient += ingredient.lstrip()
+            ingredients = self._fallback_ingredients_two()
             if ingredients:
                 self.is_fallback_v2 = True
+        if not ingredients:
+            ingredients = self._fallback_ingredients_two()
+            if ingredients:
+                self.is_fallback_v2 = True
+
         return [normalize_string(i) for i in ingredients]
 
     def _fallback_garnish(self):
@@ -106,7 +115,6 @@ class ImbibeMagazine(CocktailScraper):
         return ''
 
     def ingredients(self):
-
         try:
             ingredients_html = self.soup.findAll('div', {'class': ['single-box', 'clearfix', 'entry-content']})[1].findAll('p')[1]
         except IndexError:
@@ -114,9 +122,12 @@ class ImbibeMagazine(CocktailScraper):
                 ingredients_html = self.soup\
                     .findAll('ul', {'class': ['ingredients__ingredients']})[0]
             except IndexError:
-                return self._fallback_ingredients()
-            ingredients = [j.text.strip() for j in ingredients_html.findAll('li')]
-            return [normalize_string(ingredient) for ingredient in ingredients]
+                ingredients = self._fallback_ingredients()
+                if ingredients:
+                    return ingredients
+            else:
+                ingredients = [j.text.strip() for j in ingredients_html.findAll('li')]
+                return [normalize_string(ingredient) for ingredient in ingredients]
         else:
             ingredients = []
             current = ''
@@ -136,7 +147,9 @@ class ImbibeMagazine(CocktailScraper):
                 ingredients.append(current.strip())
 
         if not ingredients:
-            return self._fallback_ingredients()
+            ingredients = self._fallback_ingredients()
+        if not ingredients:
+            pass
 
         return [normalize_string(ingredient) for ingredient in ingredients]
 
